@@ -18,6 +18,22 @@ jobs:
       - name: Build with Maven
         run: mvn -DskipTests -B package --no-transfer-progress --file ./pom.xml
 
+  deploy:
+    needs: build
+    environment: UAT
+    name: Deploy Application on Enviroment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: cleanup destination
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: rm -rf ./target/
+
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
@@ -27,3 +43,28 @@ jobs:
           port: 22
           source: './target/*digitalbank*.war'
           target: '~'
+
+  install:
+    needs: deploy
+    environment: UAT
+    name: Copy to Application to the final destiontion
+    runs-on: ubunto-latest
+
+    steps:
+      - name: rename file
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: cp ./target/*digi*.war digitalbank.war
+
+      - name: rename file
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IP }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: cp ./target/digitalbank.war /opt/tomcat/webapps/
