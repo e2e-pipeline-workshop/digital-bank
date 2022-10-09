@@ -72,4 +72,4 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          script: cp ./deployment/digibank.war /opt/tomcat/webapps/
+          script: cp ~/deployment/digibank.war /opt/tomcat/webapps/
