@@ -19,7 +19,7 @@ jobs:
         run: mvn -DskipTests -B package --no-transfer-progress --file ./pom.xml
 
       - name: rename Artefakt
-        run: mv ./target/*digibank*.war digibank.war
+        run: mv ./target/*digitalbank*.war digibank.war
 
       - uses: actions/upload-artifact@master
         with:
@@ -61,7 +61,7 @@ jobs:
   install:
     needs: deploy
     environment: UAT
-    name: Copy to Application to the final destination
+    name: Install Application
     runs-on: ubuntu-latest
 
     steps:
