@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"> 
+
+<head th:replace="common/sections :: header-css"/>
+
+<body>
+
+
+	<!-- Left Panel -->
+	<aside th:replace="common/menus :: left-panel"></aside>
+
+    <!-- Right Panel -->
+	<div id="right-panel" class="right-panel">
+	
+		<header th:replace="common/menus :: rp-header"/>
+		
+		<div th:replace="common/menus :: rp-breadcrumbs (pageTitle='View Checking Accounts')"/>
+    
+    	<!-- Page Content Begin -->
+    
+	    	<div class="content mt-3">
+	            <div class="animated fadeIn">
+	            	
+	            	<div id="new-account-conf-alert" class="sufee-alert alert with-close alert-success alert-dismissible fade show" th:if="${newAcctConfMsg != ''}">
+                   		<span class="badge badge-pill badge-success">Confirmation</span>
+                     	<span id="new-account-msg" th:text="${newAcctConfMsg}"></span>
+                     	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                       		<span aria-hidden="true">&times;</span>
+                   		</button>
+               		</div>
+	            	
+	                <div id="firstRow" class="row">				
+		    			<div class="col-md-6 col-lg-3" th:each="acct : ${accountList}">
+	                        <div th:class="${acct.currentBalance < 0} ? 'card bg-flat-color-4 text-light':'card bg-flat-color-1 text-light'">
+	                        	
+	                        	<form th:action="@{/account/checking-view}" method="get">
+		                            <div class="card-body">
+		                            	
+		                            	<label class="switch switch-text switch-success switch-pill float-right">
+		                                	<input type="checkbox" onclick="form.submit()" class="switch-input" name="selectSwitch" th:value="${acct.id}" th:checked="${acct.id==selectId}">
+		                                		<span data-on="On" data-off="Off" class="switch-label"></span> 
+		                                		<span class="switch-handle"></span>
+		                                </label>
+		                     
+		                                <div class="h4 m-0" th:text="${acct.name}" contenteditable=true></div>
+		                                <div><small class="text-light" th:text="'Account: ' + ${acct.accountType.name}"></small></div>
+		                                <div><small class="text-light" th:text="'Ownership: ' + ${acct.ownershipType.name}"></small></div>
+		                                <div><small class="text-light" th:text="'Account Number: ' + ${acct.accountNumber}"></small></div>
+		                                <div><small class="text-light" th:text="'Interest Rate: ' + ${acct.interestRate} + '%'"></small></div>
+		                                <div><br></div>
+		                                <div class="h4 m-0" th:text="'Balance: $' + ${acct.currentBalance}"></div>
+		                            </div>
+	                            </form> <!-- End form -->
+	                        </div> <!-- End Card -->
+	                    </div><!-- End Column 6-->
+                	</div> <!-- End Row -->
+                
+                <div class="row">
+	                <div class="col-md-12">
+	                    <div class="card">
+	                        <div class="card-header bg-secondary">
+	                            <strong class="card-title text-light">Transactions</strong>
+	                        </div>
+	                        <div class="card-body">
+	                        	<table id="transactionTable" class="table table-striped table-bordered">
+				                    <thead>
+				                      <tr class="bg-secondary text-light">
+				                        <th data-field="date" data-sortable="true">Date</th>
+				                        <th data-field="category" data-sortable="true">Category</th>
+				                        <th data-field="description" data-sortable="true">Description</th>
+				                        <th data-field="amount" data-sortable="true">Amount</th>
+				                        <th data-field="balance" data-sortable="true">Balance</th>
+				                      </tr>
+				                    </thead>
+				                    <tbody>
+				                      <tr th:each="trans : ${transactionList}">
+				                        <td th:text="${#dates.format(trans.transactionDate, 'yyyy-MM-dd HH:mm')}"></td>
+				                        <td th:text="${trans.transactionCategory.name}"></td>
+				                        <td th:text="${trans.transactionNumber + ' (' + trans.transactionType.code +') - ' + trans.description}"></td>
+				                        <td th:class="${trans.amount < 0} ? text-danger" th:text="'$' + ${trans.amount}"></td>
+				                        <td th:class="${trans.runningBalance < 0} ? text-danger" th:text="'$' + ${trans.runningBalance}"></td>
+				                      </tr>
+				                   </tbody>
+	                  			</table>
+	                        </div> <!-- End Card Body -->
+	                    </div> <!-- End Card -->
+	                </div>   <!-- End Column 12 -->
+	           	</div> <!--  End Row -->
+	            
+	            <div th:if="${noAccounts}">
+           			<button type="button" id="showModal" style="display: none;" data-toggle="modal" data-target="#emptyAccounts"></button> 
+	 			</div> 
+	 
+	    	</div><!-- .animated -->
+		</div><!-- .content -->
+	    
+	    <!-- Page Content End -->
+	    
+	</div> <!-- End right panel -->
+	
+	<div th:if="${noAccounts}" class="modal fade" id="emptyAccounts" tabindex="-1" role="dialog" aria-labelledby="largeModalLabel" aria-hidden="true" data-backdrop="static">
+       	<div class="modal-dialog modal-lg" role="document">
+           	<div class="modal-content">
+               	<div class="modal-header">
+                   	<h5 class="modal-title" id="largeModalLabel">No Accounts</h5>
+                   </div>
+                   <div class="modal-body">
+                   	<p>You currently do not have accounts on record to view. Please create a new account.</p>
+                   </div>
+                   <div class="modal-footer">
+                       	<a th:href="@{/account/checking-add}"><button type="button" class="btn btn-primary">Continue</button></a>
+                   </div>
+           	</div>
+        </div>
+    </div>
+    
+	<!-- Footer -->
+	<div th:replace="common/sections :: footer-scripts"></div>
+	
+	<script th:src="@{/js/lib/data-table/datatables.min.js}"></script>
+    <script th:src="@{/js/lib/data-table/dataTables.bootstrap.min.js}"></script>
+    <script th:src="@{/js/lib/data-table/dataTables.buttons.min.js}"></script>
+    <script th:src="@{/js/lib/data-table/buttons.bootstrap.min.js}"></script>
+    <script th:src="@{/js/lib/data-table/jszip.min.js}"></script>
+    <script th:src="@{/js/lib/data-table/pdfmake.min.js}"></script>
+    <script th:src="@{/js/lib/data-table/vfs_fonts.js}"></script>
+    <script th:src="@{/js/lib/data-table/buttons.html5.min.js}"></script>
+    <script th:src="@{/js/lib/data-table/buttons.print.min.js}"></script>
+    <script th:src="@{/js/lib/data-table/buttons.colVis.min.js}"></script>
+    <script th:src="@{/js/lib/data-table/datatables-init.js}"></script>
+    
+	<script type="text/javascript">
+	
+		$('#transactionTable').DataTable({
+		       'order': []
+		} );
+		
+		
+		// variable to save current account name when selected
+		var currentName;
+
+		// Save current account name when seleted
+	    $("div [contenteditable=true]").focus(function() {
+	    	currentName = $(this).html();
+	    });
+
+		// When focus from name is blurred check to see if the account name changed
+	    $("div [contenteditable=true]").blur(function() {
+	        if ($(this).html() != currentName) {
+	        	
+	        	// save the element
+	        	var element = $(this);
+	        	
+	        	// Thymeleaf to set base url
+	        	var baseURL = "[[@{/account/update?id=}]]";
+	        	
+	        	// save the new name and id of the account
+	        	var acctId = $(this).closest('form').find('input').val();
+	        	var acctName = $(this).html();
+	        	var valid = true;
+	        	
+	        	if (acctName.length <= 0){
+	        		var error = '<div id="errorUpdate" class="sufee-alert alert with-close alert-danger alert-dismissible fade show">';
+        	    	error += '<span class="badge badge-pill badge-danger">Error</span>';
+	    			error += '<span> Account Name must not be empty.</span>';
+	  				error += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+	    			error += '<span aria-hidden="true">&times;</span>';
+					error += '</button>';
+					error += '</div>';
+					
+					element.text(currentName);
+        	    	$("#firstRow").before(error);
+        	    	
+        	    	valid = false;
+	        		
+	        	}
+	        	
+	        	if (acctName.length > 40){
+	        		var error = '<div id="errorUpdate" class="sufee-alert alert with-close alert-danger alert-dismissible fade show">';
+        	    	error += '<span class="badge badge-pill badge-danger">Error</span>';
+	    			error += '<span> Account Name must be less than 40 characters.</span>';
+	  				error += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+	    			error += '<span aria-hidden="true">&times;</span>';
+					error += '</button>';
+					error += '</div>';
+					
+					element.text(currentName);
+        	    	$("#firstRow").before(error);
+        	    	
+        	    	valid = false;
+	        		
+	        	}
+	           	                   
+	        	// make ajax call to update the new account name on server
+	        	if (valid){
+		        	$.ajax({
+		        		type : "POST",
+		        	    contentType : "application/json",
+		        	    url : baseURL + acctId + "&newName=" + acctName,
+		        	    cache : false,
+		        	    timeout : 600000,
+		        	    success : function(data) {
+		        	   		
+		        	   		var success = '<div id="successUpdate" class="sufee-alert alert with-close alert-success alert-dismissible fade show">';
+							success += '<span class="badge badge-pill badge-success">Success</span>';
+			    			success += '<span> Update of account name saved.</span>';
+			  				success += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+			    			success += '<span aria-hidden="true">&times;</span>';
+							success += '</button>';
+							success += '</div>';
+							
+							$("#firstRow").before(success);
+						
+		        	    },
+		        	    error : function(e) {
+		        	    
+		        	      	var error = '<div id="errorUpdate" class="sufee-alert alert with-close alert-danger alert-dismissible fade show">';
+		        	    	error += '<span class="badge badge-pill badge-danger">Error</span>';
+			    			error += '<span> An unknown error occurred while executing an update to the account name.</span>';
+			  				error += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+			    			error += '<span aria-hidden="true">&times;</span>';
+							error += '</button>';
+							error += '</div>';	
+		        	    
+		        	    	element.text(currentName);
+		        	    	$("#firstRow").before(error);
+		        	    }
+		        	}); // end ajax
+	        	} // end if valid
+	        }   // end if account name changed 
+	    });		
+		
+   	</script>
+  
+	<div th:if="${noAccounts}"><script>document.getElementById("showModal").click();</script></div>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Docker Build and Upload to GHCR
+
+on:
+  workflow_run:
+    workflows: ['unit-test']
+    branches: [main]
+    types:
+      - completed
+
+env:
+  DOCKER_REPOSITORY: as-workshop
+  IMAGE_NAME: as-bank
+
+jobs:
+  build-and-push-image:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -DskipTests -B package --no-transfer-progress --file pom.xml
+
+      - name: Build Docker Image
+        run: docker build ./bank/ --file ./bank/Dockerfile --tag ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }} --no-cache
+
+      - name: List all docker images
+        run: docker images
+
+      - name: Login to GHVR
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Upload Artefact
+        run: docker push ${{ env.DOCKER_REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.run_number }}

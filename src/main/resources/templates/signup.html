@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"> 
+
+<head th:replace="common/sections :: header-css"/>
+
+<body class="bg-dark">
+	
+
+
+    <div class="sufee-login d-flex align-content-center flex-wrap">
+        <div class="container">
+            <div class="login-content">
+                <div class="login-logo">
+                    <a th:href="@{/home}">
+                        <img class="align-content" th:src="@{images/logo.png}" alt="">
+                    </a>
+                </div>
+                <div class="login-form">
+                	<div class="form-group text-left">
+	              		<div class="sufee-alert alert with-close alert-danger alert-dismissible fade show" th:if="${errorMsg}">
+	                       <span class="badge badge-pill badge-danger">Error</span>
+	                         <span th:text="${errorMsg}"></span>
+	                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	                           <span aria-hidden="true">&times;</span>
+	                       </button>
+	                   </div>
+	              	</div>
+                    <form th:action="@{/signup}" method="post">
+                        <div class="form-group">
+                            <label for="title" class=" form-control-label"><strong>Title</strong></label>
+                              <select name="title" id="title" class="form-control" th:field="${userProfile.title}" required>
+                                <option value="">Please select</option>
+                                <option value="Mr.">Mr.</option>
+                                <option value="Ms.">Ms.</option>
+                                <option value="Mrs.">Mrs.</option>
+                              </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label"><strong>First Name</strong></label>
+                            <input type="text" class="form-control" id="firstName" th:field="${userProfile.firstName}" required>
+                        	<small class="form-text text-muted">ex. James</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label"><strong>Last Name</strong></label>
+                            <input type="text" class="form-control" id="lastName" th:field="${userProfile.lastName}" required>
+                        	<small class="form-text text-muted">ex. Smith</small>
+                        </div>
+                        <div>
+                        	<label for="gender" class="form-control-label"><strong>Gender</strong></label>
+                       </div>
+                        <div class="form-check-inline form-check">
+                        	<label for="male" class="form-check-label">
+                             	<input type="radio" id="gender" th:field="${userProfile.gender}" name="gender" value="M" class="form-check-input" required>M &nbsp;&nbsp;&nbsp;
+                             </label>
+                             <label for="female" class="form-check-label">
+                             	<input type="radio" id="gender" th:field="${userProfile.gender}" name="gender" value="F" class="form-check-input" required>F &nbsp;&nbsp;&nbsp;
+                            </label>
+                        </div>
+                        <br><br>
+                        <div class="form-group">
+                            <label class="form-control-label"><strong>Date of Birth</strong></label>
+                            <input type="text" class="form-control" id="dob" th:field="${userProfile.dob}" required th:pattern="${patternDOB}">
+                            <small class="form-text text-muted">ex. MM/DD/YYYY</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label"><strong>Social Security Number</strong></label>
+                            <input type="text" class="form-control" id="ssn" th:field="${userProfile.ssn}" required autocomplete="off" th:pattern="${patternSSN}" th:title="${patternSSNMSG}">
+                        	<small class="form-text text-muted">ex. 123-45-6789</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label"><strong>Email Address</strong></label>
+                            <input type="email" class="form-control" id="emailAddress" th:field="${userProfile.emailAddress}" required th:pattern="${patternEmail}">
+                        	<small class="form-text text-muted">ex. user@gmail.com</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label"><strong>Password</strong></label>
+                            <input type="password" class="form-control" id="password" th:field="${user.password}" required th:pattern="${patternPassword}" th:title="${patternPasswordMSG}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label"><strong>Confirm Password</strong></label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                        
+                        <input type="hidden" id="address" name="address" th:field="${userProfile.address}">
+                        <input type="hidden" id="locality" name="locality" th:field="${userProfile.locality}">
+                        <input type="hidden" id="region" name="region" th:field="${userProfile.region}">
+                        <input type="hidden" id="postalCode" name="postalCode" th:field="${userProfile.postalCode}">
+                        <input type="hidden" id="country" name="country" th:field="${userProfile.country}">
+                        <input type="hidden" id="homePhone" name="homePhone" th:field="${userProfile.homePhone}">
+                        <input type="hidden" id="mobilePhone" name="mobilePhone" th:field="${userProfile.mobilePhone}">
+                        <input type="hidden" id="workPhone" name="workPhone" th:field="${userProfile.workPhone}">
+                        <input type="hidden" id="username" name="username" th:field="${user.username}">
+                        <button type="submit" class="btn btn-primary btn-flat m-b-30 m-t-30">Next</button>
+
+                        <div class="register-link m-t-15 text-center">
+                            <p>Already have account ? <a th:href="@{/login}"> Sign in</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<div th:replace="common/sections :: footer-scripts"></div>
+	
+	<script>
+  			$( function() {
+    			$( "#dob" ).datepicker();
+  			} );
+  	</script>
+	
+	<script type="text/javascript">
+	
+		var password = document.getElementById("password"), confirm_password = document.getElementById("confirmPassword");
+
+		function validatePassword(){
+	  		if(password.value != confirm_password.value) {
+	    		confirm_password.setCustomValidity("Passwords Do Not Match");
+	  		} else {
+	    		confirm_password.setCustomValidity('');
+	 		 }	
+		}
+
+		password.onchange = validatePassword;
+		confirm_password.onkeyup = validatePassword;
+	</script>
+	
+
+</body>
+</html>
