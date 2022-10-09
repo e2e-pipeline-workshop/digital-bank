@@ -16,7 +16,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -DskipTests -B package --no-transfer-progress --file ./bank/pom.xml
+        run: mvn -DskipTests -B package --no-transfer-progress --file ./pom.xml
 
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
@@ -25,5 +25,5 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: './bank/target/*bank*.war'
+          source: './target/*digitalbank*.war'
           target: '~'
