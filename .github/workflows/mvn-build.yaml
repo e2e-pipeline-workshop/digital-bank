@@ -19,12 +19,12 @@ jobs:
         run: mvn -DskipTests -B package --no-transfer-progress --file ./pom.xml
 
       - name: rename Artefakt
-        run: mv ./target/*digitalbank*.war digibank.war
+        run: mv ./target/*digitalbank*.war ./target/digibank.war
 
       - uses: actions/upload-artifact@master
         with:
           name: digibank.war
-          path: ./target/
+          path: ./test-classes/
 
   deploy:
     needs: build
