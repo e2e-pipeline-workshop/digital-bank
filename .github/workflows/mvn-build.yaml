@@ -18,6 +18,14 @@ jobs:
       - name: Build with Maven
         run: mvn -DskipTests -B package --no-transfer-progress --file ./pom.xml
 
+      - name: rename Artefakt
+        run: mv ./target/*digibank*.war digibank.war
+
+      - uses: actions/upload-artifact@master
+        with:
+          name: digibank.war
+          path: ./target/
+
   deploy:
     needs: build
     environment: UAT
@@ -25,6 +33,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: get Artefakt
+        uses: actions/download-artifact@master
+        with:
+          name: digibank.war
+          path: ~
+
       - name: cleanup destination
         uses: appleboy/ssh-action@master
         with:
@@ -32,7 +46,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          script: rm -rf ./target/
+          script: rm -rf ./deployment/
 
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
@@ -41,30 +55,21 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: './target/*digitalbank*.war'
-          target: '~'
+          source: '.digibank.war'
+          target: '~/deployment/'
 
   install:
     needs: deploy
     environment: UAT
-    name: Copy to Application to the final destiontion
-    runs-on: ubunto-latest
+    name: Copy to Application to the final destination
+    runs-on: ubuntu-latest
 
     steps:
-      - name: rename file
+      - name: deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.IP }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          script: cp ./target/*digi*.war digitalbank.war
-
-      - name: rename file
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.IP }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: cp ./target/digitalbank.war /opt/tomcat/webapps/
+          script: cp ./target/digibank.war /opt/tomcat/webapps/
