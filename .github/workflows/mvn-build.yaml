@@ -24,7 +24,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: digibank.war
-          path: ./test-classes/
+          path: ./target/digibank*
 
   deploy:
     needs: build
