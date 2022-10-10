@@ -1,5 +1,10 @@
 name: scp files
 on: [push]
+
+env:
+  UAT_IP: http://3.143.147.148/
+  UAT_TOMCAT: /home/ec2-user/apache-tomcat-9.0.68/webapps
+  
 jobs:
   build:
     environment: UAT
@@ -37,12 +42,13 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: digibank.war
-          path: ~ #/home/runner/work/digital-bank/digital-bank
+          path: ~/
+          #/home/runner/work/digital-bank/digital-bank
 
       - name: cleanup destination
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.IP }}
+          host: $UAT_IP
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
@@ -51,7 +57,7 @@ jobs:
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.IP }}
+          host: $UAT_IP
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
@@ -68,11 +74,11 @@ jobs:
       - name: deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.IP }}
+          host: $UAT_IP
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          script: cp /home/ubuntu/deployment/github/workspace/digibank.war /opt/tomcat/webapps/
+          script: cp /home/ubuntu/deployment/github/workspace/digibank.war $UAT_TOMCAT
 
   automation_tests:
     needs: build # install
@@ -87,4 +93,4 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.GHCR }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/e2e-pipeline-workshop/digibank-playwright-tests/actions/workflows/run-tests.yml/dispatches \
-          -d '{"ref": "master", "tmp": "UAT" }'
+          -d '{"ref": "master", "tmp": "$UAT_IP" }'
