@@ -74,7 +74,7 @@ jobs:
           port: 22
           script: cp /home/ubuntu/deployment/github/workspace/digibank.war /opt/tomcat/webapps/
 
-    automation-tests:
+    automation_tests:
       needs: install
       environment: UAT
       name: Trigger E2E Tests
