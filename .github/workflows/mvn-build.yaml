@@ -84,7 +84,7 @@ jobs:
       - name: Trigger Workflow from e2e tests with Playwright
         run: |
           curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Authorization: Bearer ${{ secrets.GHCR }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/e2e-pipeline-workshop/digibank-playwright-tests/actions/workflows/run-tests.yml/dispatches \
           -d '{"ref": "master", "tmp": "UAT" }'
