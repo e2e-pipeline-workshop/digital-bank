@@ -87,4 +87,7 @@ jobs:
     needs: automation_tests
     name: Cleanup Job
     runs-on: ubuntu-latest
-    run: ls -la ..
+
+    steps:
+      - name: just make a list output
+        run: ls -la ..
