@@ -62,7 +62,10 @@ jobs:
       - name: tar the build - Run a multi-line script
         run: |
           cd /tmp
-          tar -cvf /tmp/deploy.tar /tmp/digibank/
+          tar -cvf deploy.tar /tmp/digibank/
+
+      - name: check Artefakt
+        run: ls -la /tmp
 
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
