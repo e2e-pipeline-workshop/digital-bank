@@ -52,8 +52,8 @@ jobs:
           name: digibank.war
           path: ./target/digibank*
 
-  build_and_deploy:
-    needs: deploy
+  install:
+    needs: build_and_deploy
     environment: UAT
     name: Install Application
     runs-on: ubuntu-latest
