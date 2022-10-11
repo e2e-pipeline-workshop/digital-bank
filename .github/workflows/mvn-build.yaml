@@ -43,7 +43,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: digibank.war
-          path: /tmp/
+          path: /tmp/digibank/
           #/home/runner/work/digital-bank/digital-bank
 
       - name: check Artefakt
@@ -65,7 +65,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ env.UAT_PORT }}
-          source: "/tmp/digibank.war"
+          source: "/tmp/digibank/."
           target: "deployment"
 
   install:
