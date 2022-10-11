@@ -42,7 +42,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: digibank.war
-          path: ~/
+          path: /tmp/
           #/home/runner/work/digital-bank/digital-bank
 
       - name: "cleanup destination at $UAT_IP"
@@ -61,7 +61,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: '/home/runner/work/digital-bank/digital-bank/digibank.war'
+          source: '/tmp/digibank.war'
           target: '~/deployment/'
 
   install:
