@@ -45,6 +45,9 @@ jobs:
           path: /tmp/
           #/home/runner/work/digital-bank/digital-bank
 
+      - name: check Artefakt
+        run: ls -la /tmp
+        
       - name: "cleanup destination at $UAT_IP"
         uses: appleboy/ssh-action@master
         with:
