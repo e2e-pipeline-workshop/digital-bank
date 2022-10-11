@@ -45,7 +45,7 @@ jobs:
           path: ~/
           #/home/runner/work/digital-bank/digital-bank
 
-      - name: cleanup destination
+      - name: "cleanup destination at $UAT_IP"
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.UAT_IP }}
@@ -57,7 +57,7 @@ jobs:
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
-          host: "$UAT_IP"
+          host: ${{ env.UAT_IP }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
