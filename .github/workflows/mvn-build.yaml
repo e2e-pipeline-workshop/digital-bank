@@ -58,6 +58,17 @@ jobs:
           port: ${{ env.UAT_PORT }}
           script: rm -rf ./deployment/*
 
+      # Runs a set of commands using the runners shell
+      - name: tar the build - Run a multi-line script
+        run: |
+          cd /tmp
+          mkdir /build
+          cp -TR /tmp/digibank/ /tmp/build
+          tar -cvf /tmp/build/deploy.tar /tmp/digibank/
+
+      - name: check Artefakt
+        run: ls -la /tmp/build
+
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
