@@ -7,7 +7,7 @@ env:
   UAT_PORT: 22
   
 jobs:
-  build:
+  build_and_deploy:
     environment: UAT
     name: Build
     runs-on: ubuntu-latest
@@ -27,6 +27,15 @@ jobs:
       - name: rename Artefakt
         run: mv ./target/*digitalbank*.war ./target/digibank.war
 
+      - name: "cleanup destination at $UAT_IP"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.UAT_IP }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ env.UAT_PORT }}
+          script: rm -rf ./deployment/*
+
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
@@ -43,53 +52,7 @@ jobs:
           name: digibank.war
           path: ./target/digibank*
 
-  deploy:
-    needs: build
-    environment: UAT
-    name: Deploy Application on Enviroment
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: get Artefakt
-        uses: actions/download-artifact@master
-        with:
-          name: digibank.war
-          path: /tmp/digibank/
-          #/home/runner/work/digital-bank/digital-bank
-
-      - name: check Artefakt
-        run: ls -la /tmp
-        
-      - name: "cleanup destination at $UAT_IP"
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ env.UAT_IP }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ env.UAT_PORT }}
-          script: rm -rf ./deployment/*
-
-      # Runs a set of commands using the runners shell
-      - name: tar the build - Run a multi-line script
-        run: |
-          cd /tmp
-          tar -cvf deploy.tar /tmp/digibank/
-
-      - name: check Artefakt
-        run: ls -la /tmp
-
-      - name: copy file via ssh password
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ env.UAT_IP }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ env.UAT_PORT }}
-          source: "/tmp/deploy.tar"
-          target: "deployment"
-          debug: true
-
-  install:
+  build_and_deploy:
     needs: deploy
     environment: UAT
     name: Install Application
@@ -106,7 +69,7 @@ jobs:
           script: cp /home/ubuntu/deployment/github/workspace/digibank.war ${{ env.UAT_TOMCAT }}
 
   automation_tests:
-    needs: build # install
+    needs: build_and_deploy # install
     environment: UAT
     name: Trigger E2E Tests
     runs-on: ubuntu-latest
@@ -115,7 +78,7 @@ jobs:
       - name: Trigger Workflow from e2e tests with Playwright
         run: |
           curl -X POST \
-          -H "Authorization: Bearer ${{ secrets.GHCR }}" \
+          -H "Authorization: Bearer ${{ secrets.PAT }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/e2e-pipeline-workshop/digibank-playwright-tests/actions/workflows/run-tests.yml/dispatches \
           -d '{"ref": "master", "tmp": "$UAT_IP" }'
