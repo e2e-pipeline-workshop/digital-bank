@@ -27,6 +27,17 @@ jobs:
       - name: rename Artefakt
         run: mv ./target/*digitalbank*.war ./target/digibank.war
 
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ env.UAT_IP }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ env.UAT_PORT }}
+          source: "./target/digibank.war"
+          target: "deployment"
+          debug: true
+
       - uses: actions/upload-artifact@master
         with:
           name: digibank.war
@@ -76,6 +87,7 @@ jobs:
           port: ${{ env.UAT_PORT }}
           source: "/tmp/deploy.tar"
           target: "deployment"
+          debug: true
 
   install:
     needs: deploy
