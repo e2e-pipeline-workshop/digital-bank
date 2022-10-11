@@ -65,8 +65,8 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ env.UAT_PORT }}
-          source: '/tmp/digibank.war'
-          target: './deployment/'
+          source: "/tmp/digibank.war"
+          target: "deployment"
 
   install:
     needs: deploy
