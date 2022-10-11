@@ -2,7 +2,7 @@ name: scp files
 on: [push]
 
 env:
-  UAT_IP: http://3.143.147.148/
+  UAT_IP: '3.145.130.221'
   UAT_TOMCAT: /home/ec2-user/apache-tomcat-9.0.68/webapps
   
 jobs:
