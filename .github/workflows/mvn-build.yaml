@@ -62,9 +62,7 @@ jobs:
       - name: tar the build - Run a multi-line script
         run: |
           cd /tmp
-          mkdir /build
-          cp -TR /tmp/digibank/ /tmp/build
-          tar -cvf /tmp/build/deploy.tar /tmp/digibank/
+          tar -cvf /tmp/deploy.tar /tmp/digibank/
 
       - name: check Artefakt
         run: ls -la /tmp/build
@@ -76,7 +74,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ env.UAT_PORT }}
-          source: "/tmp/digibank/."
+          source: "/tmp/deploy.tar"
           target: "deployment"
 
   install:
