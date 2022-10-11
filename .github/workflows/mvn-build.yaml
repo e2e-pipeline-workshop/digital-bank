@@ -48,7 +48,7 @@ jobs:
       - name: cleanup destination
         uses: appleboy/ssh-action@master
         with:
-          host: $UAT_IP
+          host: ${{ env.UAT_IP }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
@@ -57,7 +57,7 @@ jobs:
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
-          host: $UAT_IP
+          host: "$UAT_IP"
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
@@ -74,11 +74,11 @@ jobs:
       - name: deploy
         uses: appleboy/ssh-action@master
         with:
-          host: $UAT_IP
+          host: ${{ env.UAT_IP }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          script: cp /home/ubuntu/deployment/github/workspace/digibank.war $UAT_TOMCAT
+          script: cp /home/ubuntu/deployment/github/workspace/digibank.war ${{ env.UAT_TOMCAT }}
 
   automation_tests:
     needs: build # install
