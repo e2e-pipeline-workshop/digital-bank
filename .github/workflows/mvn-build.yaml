@@ -9,7 +9,7 @@ env:
 jobs:
   build_and_deploy:
     environment: UAT
-    name: Build
+    name: Build and Deploy Artefact to Server
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -66,7 +66,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ env.UAT_PORT }}
-          script: cp /home/ubuntu/deployment/github/workspace/digibank.war ${{ env.UAT_TOMCAT }}
+          script: cp -f /home/ec2-user/deployment/target/digibank.war ${{ env.UAT_TOMCAT }}
 
   automation_tests:
     needs: build_and_deploy # install
@@ -81,4 +81,4 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.PAT }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/e2e-pipeline-workshop/digibank-playwright-tests/actions/workflows/run-tests.yml/dispatches \
-          -d '{"ref": "master", "tmp": "$UAT_IP" }'
+          -d '{"ref": "master", "UAT": "http://$UAT_IP:8080/bank/login" }'
