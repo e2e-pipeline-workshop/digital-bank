@@ -90,4 +90,4 @@ jobs:
 
     steps:
       - name: just make a list output
-        run: ls -la ..
+        run: ls -la .
