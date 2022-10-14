@@ -1,16 +1,10 @@
-name: build and run unit tests
+# CHEATSHEET
 
-on: 
-  push:
-
-env:
-  UAT_IP: 3.16.21.252
-  UAT_PORT: 22
-
-jobs:
-  build_and_test_and_deploy:
-    name: Build
+## Build and Unit Test
+``` yaml
+  build_and_test:
     environment: UAT
+    name: Build and run Unit Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,6 +16,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Run Unit Tests
+        run: mvn test
+
       - name: Build with Maven
         run: mvn -DskipTests -B package --no-transfer-progress --file ./pom.xml
 
@@ -32,8 +29,20 @@ jobs:
         with:
           name: digibank.war
           path: ./target/digibank*
-          
-      - name: 'cleanup destination at $UAT_IP'
+```
+
+## Variables
+``` yaml
+env:
+  UAT_IP: '3.16.21.252'
+  UAT_TOMCAT: /home/ec2-user/apache-tomcat-9.0.68/webapps
+  UAT_PORT: 22
+```
+
+## Deploy and Install
+``` yaml
+### Build STEP ###
+      - name: cleanup destination at $UAT_IP
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.UAT_IP }}
@@ -53,8 +62,28 @@ jobs:
           target: 'deployment'
           debug: true
 
+### Install STEP ###
+install:
+    needs: build_and_deploy
+    environment: UAT
+    name: Install Application
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.UAT_IP }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ env.UAT_PORT }}
+          script: cp -f /home/ec2-user/deployment/target/digibank.war ${{ env.UAT_TOMCAT }}
+```
+
+## Run Tests
+``` yaml
   automation_tests:
-    needs: [build_and_test_and_deploy]
+    needs: install
     environment: UAT
     name: Trigger E2E Tests on UAT Environment
     runs-on: ubuntu-latest
@@ -66,4 +95,14 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.PAT }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/e2e-pipeline-workshop/digibank-playwright-tests/actions/workflows/run-tests.yml/dispatches \
-          -d '{"ref":"main","inputs":{"SUT":"http://3.16.21.252:8080/bank/login","environment":"UAT"}}'
+          -d '{"ref":"main","inputs":{"SUT":"http://url:8080/bank/login","environment":"UAT"}}'
+
+  after_test:
+    needs: automation_tests
+    name: Cleanup Job
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: just make a list output
+        run: ls -la .
+```
