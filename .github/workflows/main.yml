@@ -66,4 +66,4 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.PAT }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/e2e-pipeline-workshop/digibank-playwright-tests/actions/workflows/run-tests.yml/dispatches \
-          -d '{"ref":"main","inputs":{"SUT":"http://' + ${{ env.UAT_IP }} + '":8080/bank/login","environment":"UAT"}}'
+          -d '{"ref":"main","inputs":{"SUT":"http://3.16.21.252:8080/bank/login","environment":"UAT"}}'
