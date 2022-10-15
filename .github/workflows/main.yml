@@ -2,10 +2,15 @@ name: Build and Deploy
 
 on: [push]
 
+env:
+  UAT_IP: '3.12.85.48'
+  UAT_TOMCAT: /home/ec2-user/apache-tomcat-9.0.68/webapps
+  UAT_PORT: 22
+  
 jobs:
-  build_and_test:
+  build_and_test_and_deploy:
       environment: UAT
-      name: Build and run Unit Tests
+      name: Build and run Unit Tests and Deploy
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v3
@@ -32,3 +37,39 @@ jobs:
           with:
             name: digibank.war
             path: ./target/digibank*
+
+        - name: cleanup destination at $UAT_IP
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ env.UAT_IP }}
+            username: ${{ secrets.USER }}
+            key: ${{ secrets.SSH_KEY }}
+            port: ${{ env.UAT_PORT }}
+            script: rm -rf ./deployment/*
+
+        - name: copy file via ssh password
+          uses: appleboy/scp-action@master
+          with:
+            host: ${{ env.UAT_IP }}
+            username: ${{ secrets.USER }}
+            key: ${{ secrets.SSH_KEY }}
+            port: ${{ env.UAT_PORT }}
+            source: './target/digibank.war'
+            target: 'deployment'
+            
+      ### Install STEP ###
+  install:
+    needs: [build_and_test_and_deploy]
+    environment: UAT
+    name: Install Application
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.UAT_IP }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ env.UAT_PORT }}
+          script: cp -f /home/ec2-user/deployment/target/digibank.war ${{ env.UAT_TOMCAT }}
