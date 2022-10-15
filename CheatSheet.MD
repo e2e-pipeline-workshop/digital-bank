@@ -61,7 +61,8 @@ env:
           source: './target/digibank.war'
           target: 'deployment'
           debug: true
-
+```
+``` yaml
 ### Install STEP ###
 install:
     needs: build_and_deploy
