@@ -3,7 +3,7 @@ name: build and upload
 on: push 
 
 env:
-  UAT_IP: '3.16.21.252'
+  UAT_IP: '3.136.116.75'
   UAT_TOMCAT: /home/ec2-user/apache-tomcat-9.0.68/webapps
   UAT_PORT: 22
 
