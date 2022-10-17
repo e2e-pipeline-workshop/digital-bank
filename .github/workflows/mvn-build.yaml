@@ -2,7 +2,7 @@ name: scp files
 on: [workflow_dispatch]
 
 env:
-  UAT_IP: '3.12.85.48'
+  UAT_IP: '3.136.116.75'
   UAT_TOMCAT: /home/ec2-user/apache-tomcat-9.0.68/webapps
   UAT_PORT: 22
 
