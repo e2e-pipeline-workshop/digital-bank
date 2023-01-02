@@ -3,8 +3,8 @@ name: build
 on: push 
 
 jobs:
-  build_and_test:
-    name: Build and run Unit Tests
+  unit_tests_linters_sast:
+    name: Run Unit Tests, Linters and SAST
     runs-on: ubuntu-latest
     steps:
         ##########################
@@ -55,4 +55,19 @@ jobs:
         with:
           name: sast-scan-reports
           path: reports
-            
+          
+  build:
+    runs-on: ubuntu-lastest
+    needs: [unit_tests_linters_sast]
+    
+    steps: 
+      - name: Build with Maven
+        run: mvn -DskipTests -B package --no-transfer-progress --file ./pom.xml
+
+      - name: rename Artefakt
+        run: mv ./target/*digitalbank*.war ./target/digibank.war
+        
+      - uses: actions/upload-artifact@master
+        with:
+          name: digibank.war
+          path: ./target/digibank*
