@@ -43,13 +43,12 @@ jobs:
       - name: Run Unit Tests
         run: mvn test
 
-      - name: Fortify ScanCentral Scan
-      # You may pin to the exact commit or the version.
-      # uses: fortify/gha-setup-scancentral-client@906d5cb5d8765c2e86e1ae7d32cd7b4bf45103f2
-        uses: fortify/gha-setup-scancentral-client@v1.2.0
+      - uses: AppThreat/sast-scan-action@master
         with:
-          # Fortify ScanCentral Client version to use
-          version: 21.2.0
-          # ScanCentral client authentication token
-          # client-auth-token: # optional
-       
+          type: "java"
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: reports
+          path: reports
+            
