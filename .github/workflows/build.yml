@@ -45,10 +45,12 @@ jobs:
 
       - uses: AppThreat/sast-scan-action@master
         with:
-          type: "java"
+          output: reports
+          type: java
 
       - uses: actions/upload-artifact@v1
+        if: failure()
         with:
-          name: reports
+          name: sast-scan-reports
           path: reports
             
