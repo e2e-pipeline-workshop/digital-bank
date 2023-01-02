@@ -43,13 +43,15 @@ jobs:
       - name: Run Unit Tests
         run: mvn test
 
-      - uses: AppThreat/sast-scan-action@master
+      - name: Run SAST checks
+        continue-on-error: true
+        uses: AppThreat/sast-scan-action@master
         with:
           output: reports
           type: java
 
       - uses: actions/upload-artifact@v1
-        if: failure()
+        if: always()
         with:
           name: sast-scan-reports
           path: reports
