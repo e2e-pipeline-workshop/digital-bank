@@ -46,9 +46,9 @@ jobs:
       - name: Fortify ScanCentral Scan
       # You may pin to the exact commit or the version.
       # uses: fortify/gha-setup-scancentral-client@906d5cb5d8765c2e86e1ae7d32cd7b4bf45103f2
-      uses: fortify/gha-setup-scancentral-client@v1.2.0
-      with:
-        # Fortify ScanCentral Client version to use
-        version: # default is 20.2.0
-        # ScanCentral client authentication token
-        client-auth-token: # optional
+        uses: fortify/gha-setup-scancentral-client@v1.2.0
+        with:
+          # Fortify ScanCentral Client version to use
+          version: # default is 20.2.0
+          # ScanCentral client authentication token
+          client-auth-token: # optional
