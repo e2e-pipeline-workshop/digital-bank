@@ -1,6 +1,6 @@
 name: build and upload
 
-on: push 
+on: workflow_dispatch 
 
 env:
   UAT_IP: '3.136.116.75'

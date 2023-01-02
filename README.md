@@ -2,6 +2,8 @@
 
 Digital Bank is a sample application that was developed for exploratory purposes to examine development frameworks and techniques. The application is an example online digital banking application with integrations into other services.
 
+[![GitHub Super-Linter](https://github.com/e2e-pipeline-workshop/digital-bank/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 ## Getting Started
 
 * Using either an Eclipse IDE or IntelliJ, import the source code as an Existing Maven Project. 
