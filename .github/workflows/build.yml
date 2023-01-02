@@ -74,3 +74,45 @@ jobs:
         with:
           name: digibank.war
           path: ./target/digibank*
+
+  prepare_env:
+    runs-on: ubuntu-latest
+    needs: [build]
+
+    steps: 
+      - name: just a step 
+        run: ls -la .
+      
+      #- name: 'cleanup destination at $UAT_IP'
+      #  uses: appleboy/ssh-action@master
+      #  with:
+      #    host: ${{ env.UAT_IP }}
+      #    username: ${{ secrets.USER }}
+      #    key: ${{ secrets.SSH_KEY }}
+      #    port: ${{ env.UAT_PORT }}
+      #    script: rm -rf ./deployment/*
+
+  deploy: 
+    runs-on: ubuntu-latest
+    needs: [prepare_env]
+    
+    steps: 
+      - uses: actions/download-artifact@v3
+        with:
+          name: digibank.war
+          path: digibank/
+         
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: digibank/
+
+    #  - name: copy file via ssh password
+    #    uses: appleboy/scp-action@master
+    #    with:
+    #      host: ${{ env.UAT_IP }}
+    #      username: ${{ secrets.USER }}
+    #      key: ${{ secrets.SSH_KEY }}
+    #      port: ${{ env.UAT_PORT }}
+    #      source: './target/digibank.war'
+    #      target: 'deployment'
+    #      debug: true

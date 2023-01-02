@@ -1,11 +1,11 @@
 name: scp files
-on: [workflow_dispatch]
+on: [push]
 
 env:
-  UAT_IP: '3.136.116.75'
+  UAT_IP: '3.145.130.221'
   UAT_TOMCAT: /home/ec2-user/apache-tomcat-9.0.68/webapps
   UAT_PORT: 22
-
+  
 jobs:
   build_and_deploy:
     environment: UAT
@@ -27,7 +27,7 @@ jobs:
       - name: rename Artefakt
         run: mv ./target/*digitalbank*.war ./target/digibank.war
 
-      - name: 'cleanup destination at $UAT_IP'
+      - name: "cleanup destination at $UAT_IP"
         uses: appleboy/ssh-action@master
         with:
           host: ${{ env.UAT_IP }}
@@ -43,8 +43,8 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ env.UAT_PORT }}
-          source: './target/digibank.war'
-          target: 'deployment'
+          source: "./target/digibank.war"
+          target: "deployment"
           debug: true
 
       - uses: actions/upload-artifact@master
@@ -69,7 +69,7 @@ jobs:
           script: cp -f /home/ec2-user/deployment/target/digibank.war ${{ env.UAT_TOMCAT }}
 
   automation_tests:
-    needs: install
+    needs: install # install
     environment: UAT
     name: Trigger E2E Tests on UAT Environment
     runs-on: ubuntu-latest
@@ -81,9 +81,9 @@ jobs:
           -H "Authorization: Bearer ${{ secrets.PAT }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/e2e-pipeline-workshop/digibank-playwright-tests/actions/workflows/run-tests.yml/dispatches \
-          -d '{"ref":"main","inputs":{"SUT":"http://url:8080/bank/login","environment":"UAT"}}'
+          -d '{"ref":"main","inputs":{"SUT":"http://$UAT_IP:8080/bank/login","environment":"UAT"}}'          
 
-  after_test:
+  after_test: 
     needs: automation_tests
     name: Cleanup Job
     runs-on: ubuntu-latest
