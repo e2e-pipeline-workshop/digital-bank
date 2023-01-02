@@ -49,6 +49,7 @@ jobs:
         uses: fortify/gha-setup-scancentral-client@v1.2.0
         with:
           # Fortify ScanCentral Client version to use
-          version: # default is 20.2.0
+          version: 21.2.0
           # ScanCentral client authentication token
-          client-auth-token: # optional
+          # client-auth-token: # optional
+       
