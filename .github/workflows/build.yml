@@ -81,7 +81,7 @@ jobs:
 
     steps: 
       - name: just a step 
-        run: ls -la .
+        run: "ls -la ."
       
       #- name: 'cleanup destination at $UAT_IP'
       #  uses: appleboy/ssh-action@master
