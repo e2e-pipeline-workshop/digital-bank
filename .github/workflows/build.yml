@@ -57,7 +57,7 @@ jobs:
           path: reports
           
   build:
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     needs: [unit_tests_linters_sast]
     
     steps: 
