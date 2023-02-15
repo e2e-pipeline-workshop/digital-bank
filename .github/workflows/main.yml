@@ -88,7 +88,7 @@ jobs:
           script: cp -f /home/ec2-user/deployment/target/digibank.war ${{ env.UAT_TOMCAT }}
           
   automation_tests:
-    needs: install
+    needs: [check_env]  #install
     environment: UAT
     name: Trigger E2E Tests on UAT Environment
     runs-on: ubuntu-latest
@@ -105,7 +105,7 @@ jobs:
                 "api_payload": {
                   "sut": "${{ env.UAT_IP }}"
                 }
-              }}'
+              }'
 
   after_test:
     needs: automation_tests
