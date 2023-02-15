@@ -1,8 +1,7 @@
 name: build and upload
 run-name: Build and Deploy to UAT from user @${{ github.actor }}
 
-on: workflow_dispatch 
-
+on: [workflow_dispatch, push]
 env:
   UAT_IP: '3.65.177.187'
   UAT_TOMCAT: /usr/share/tomcat/webapps
@@ -10,7 +9,7 @@ env:
 
 jobs:
   check_env: 
-    runs-on: ubuntu-lastest
+    runs-on: ubuntu-latest
     environment: UAT
     
     steps: 
