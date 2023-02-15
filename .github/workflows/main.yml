@@ -99,8 +99,8 @@ jobs:
           curl -X POST \
           -H "Authorization: Bearer ${{ secrets.PAT }}" \
           -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/e2e-pipeline-workshop/digibank-playwright-tests/actions/workflows/run-tests.yml/dispatches \
-          -d '{"event_type":"trigger-tests","client_payload":{"unit":false,"integration":true}}'
+          https://api.github.com/repos/e2e-pipeline-workshop/digibank-playwright-tests/dispatches \
+          -d  '{"event_type": "trigger-tests", "client_payload" : { "sut" : "${{ env.UAT_IP }}" } }'
 
   after_test:
     needs: automation_tests
