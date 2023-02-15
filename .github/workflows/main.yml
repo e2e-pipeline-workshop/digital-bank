@@ -1,14 +1,29 @@
 name: build and upload
+run-name: Build and Deploy to UAT from user @${{ github.actor }}
 
 on: workflow_dispatch 
 
 env:
-  UAT_IP: 'http://3.65.177.187/'
+  UAT_IP: '3.65.177.187'
   UAT_TOMCAT: /usr/share/tomcat/webapps
   UAT_PORT: 22
 
 jobs:
+  check_env: 
+    runs-on: ubuntu-lastest
+    environment: UAT
+    
+    steps: 
+     - name: cleanup destination at $UAT_IP
+       uses: appleboy/ssh-action@master
+       with:
+         host: ${{ env.UAT_IP }}
+         username: ${{ secrets.USER }}
+         key: ${{ secrets.SSH_KEY }}
+         port: ${{ env.UAT_PORT }}
+    
   build_and_test:
+    needs: [check_env]
     environment: UAT
     name: Build and run Unit Tests
     runs-on: ubuntu-latest
@@ -36,6 +51,7 @@ jobs:
           name: digibank.war
           path: ./target/digibank*
       ### Build STEP ###
+      
       - name: cleanup destination at $UAT_IP
         uses: appleboy/ssh-action@master
         with:
