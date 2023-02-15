@@ -1,9 +1,15 @@
 name: build and upload
 run-name: Build and Deploy to UAT from user @${{ github.actor }}
 
-on: [workflow_dispatch]
+on: 
+  workflow_dispatch:
+    inputs:
+      sut:
+        description: 'Testsystem IP address'
+        required: true
+
 env:
-  UAT_IP: '3.67.178.54'
+  UAT_IP: ${{ inputs.sut }}
   UAT_TOMCAT: /home/ec2-user/tomcat/apache-tomcat-9.0.71/webapps
   UAT_PORT: 22
 
@@ -13,6 +19,9 @@ jobs:
     environment: UAT
     
     steps: 
+     - name: print IP address
+       run: echo ${{ env.UAT_IP }}
+       
      - name: cleanup destination at $UAT_IP
        uses: appleboy/ssh-action@master
        with:
