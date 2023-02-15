@@ -3,8 +3,8 @@ run-name: Build and Deploy to UAT from user @${{ github.actor }}
 
 on: [workflow_dispatch, push]
 env:
-  UAT_IP: '3.65.177.187'
-  UAT_TOMCAT: /usr/share/tomcat/webapps
+  UAT_IP: '3.67.178.54'
+  UAT_TOMCAT: /home/ec2-user/tomcat/apache-tomcat-9.0.71/webapps
   UAT_PORT: 22
 
 jobs:
