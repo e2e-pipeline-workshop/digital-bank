@@ -22,7 +22,7 @@ jobs:
      - name: print IP address
        run: echo ${{ env.UAT_IP }}
        
-     - name: cleanup destination at $UAT_IP
+     - name: lookup if $UAT_IP is accessible
        uses: appleboy/ssh-action@master
        with:
          host: ${{ env.UAT_IP }}
@@ -30,7 +30,7 @@ jobs:
          key: ${{ secrets.SSH_KEY }}
          port: ${{ env.UAT_PORT }}
     
-  build_and_test:
+  build_and_test_and_deploy:
     needs: [check_env]
     environment: UAT
     name: Build and run Unit Tests
@@ -80,7 +80,7 @@ jobs:
 
     ### Install STEP ###
   install:
-    needs: [build_and_test]
+    needs: [build_and_test_and_deploy]
     environment: UAT
     name: Install Application
     runs-on: ubuntu-latest
