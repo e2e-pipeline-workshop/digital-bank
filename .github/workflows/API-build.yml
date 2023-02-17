@@ -3,7 +3,7 @@ run-name: Build by API from user @${{ github.actor }}
 
 on: 
   repository_dispatch:
-    types: [trigger-tests]
+    types: api-build
     inputs:
       artefactName:
         description: 'Testsystem IP address'
