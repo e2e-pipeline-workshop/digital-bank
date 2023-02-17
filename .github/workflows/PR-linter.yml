@@ -10,6 +10,5 @@ jobs:
     steps:
     - uses: seferov/pr-lint-action@master
       with:
-        title-regex: '^\[TAU-\d*\](\ )'
-        title-regex-flags: 'g' # optional
-        error-message: 'Add Jira ID to your title' # optional
+        title-regex: '^TAU-\d+\s.+'
+        error-message: 'Add Ticket ID to your title e.g. "TAU-1"' 
