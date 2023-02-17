@@ -34,5 +34,5 @@ jobs:
 
       - uses: actions/upload-artifact@master
         with:
-          name: digibank.war
+          name: ${{ github.event.client_payload.artefactName }}.war
           path: ./target/*.war
