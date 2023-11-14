@@ -24,6 +24,7 @@ public class DigitalBankApplication extends SpringBootServletInitializer {
 	
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
+		
 		return builder.build();
 	}
 }
