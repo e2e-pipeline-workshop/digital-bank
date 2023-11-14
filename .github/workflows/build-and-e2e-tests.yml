@@ -1,4 +1,4 @@
-name: build and upload
+name: build and run e2e tests
 run-name: Build and Deploy to UAT from user @${{ github.actor }}
 
 on: 
